@@ -64,7 +64,7 @@ def chat(message, history):
                     }
                 ]
             )
-        else: 
+        else:
             tool_was_called = False
             break
     return assistant_response
@@ -91,9 +91,9 @@ message_validator = UserMessageValidator(
 
 # Launch the Web UI
 gr.ChatInterface(
-        chat,
-        examples=EXAMPLES,
-        title="Digital Twin",
-        description="Talk to my AI twin about my career",
-        chatbot=gr.Chatbot(show_label=False),
-    ).launch(css=CSS, js=JS, theme=gr.themes.Base())
+    chat,
+    examples=EXAMPLES,
+    title="Digital Twin",
+    description="Talk to my AI twin about my career",
+    chatbot=gr.Chatbot(show_label=False),
+).launch(css=CSS, js=JS, theme=gr.themes.Base(), server_port=7860)
