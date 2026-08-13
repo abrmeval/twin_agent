@@ -17,7 +17,6 @@ class TwinResponseReviewer:
         response = self.client.chat.completions.create(
             model="gpt-5-nano",
             messages=message_list,
-            tools=tools,
             max_completion_tokens=5000,
         )
 
@@ -38,9 +37,8 @@ class UserMessageValidator:
         message_list = [self.instructions, message]
 
         response = self.client.chat.completions.create(
-            model="openrouter/free",
+            model="openai/gpt-oss-120b",
             messages=message_list,
-            tools=tools,
             max_completion_tokens=5000,
         )
         json_data = json.loads(response.choices[0].message.content)

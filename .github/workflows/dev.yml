@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner  }}
+  IMAGE_NAME: ${{ github.repository_owner  }}/digital-twin
 
 jobs:
   build-and-push:
