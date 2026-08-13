@@ -1,12 +1,12 @@
 import gradio as gr
-import context
+import json
+import context as context
 from digital_twin import DigitalTwin
 from providers import AiProvider
 import agentic.context as agents_context
 from agentic.agents import TwinResponseReviewer, UserMessageValidator
 from tools import AiTools
 from notifications import NotificationClient
-import json
 from styles import CSS, JS, EXAMPLES
 
 

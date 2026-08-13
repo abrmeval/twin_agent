@@ -3,8 +3,9 @@ from pypdf import PdfReader
 
 current_file_dir = os.path.dirname(os.path.abspath(__file__))
 
+
 def get_profile():
-    pdf_path = os.path.join(current_file_dir, "info", "profile.pdf")
+    pdf_path = os.path.join(current_file_dir, "..", "info", "profile.pdf")
     reader = PdfReader(pdf_path)
     linkedin = ""
     for page in reader.pages:
@@ -15,7 +16,7 @@ def get_profile():
 
 
 def get_summary():
-    summary_path = os.path.join(current_file_dir, "info", "summary.txt")
+    summary_path = os.path.join(current_file_dir, "..", "info", "summary.txt")
     with open(summary_path, "r", encoding="utf-8") as f:
         return f.read()
 
