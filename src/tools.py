@@ -1,14 +1,16 @@
 import json
 
+
 class AiTools:
-    def __init__(self, notification_client):
+    def __init__(self, notification_client, knowledge_store):
         self.notification_client = notification_client
-        pass
+        self.knowledge_store = knowledge_store
 
     def __tool_func(self):
         return {
             "record_user_details": self.record_user_details,
             "record_unknown_question": self.record_unknown_question,
+            "query_knowledge": self.query_knowledge,
         }
 
     def record_user_details(
@@ -24,6 +26,12 @@ class AiTools:
             f"Recording {question} asked that I couldn't answer"
         )
         return "OK"
+
+    def query_knowledge(self, question):
+        results = self.knowledge_store.search(question, k=5)
+        return json.dumps(
+            [{"content": r["content"], "score": r["score"]} for r in results]
+        )
 
     def handle_tool_calls(self, tool_calls):
         results = []
@@ -84,6 +92,24 @@ class AiTools:
                                 "type": "string",
                                 "description": "The question that couldn't be answered",
                             },
+                        },
+                        "required": ["question"],
+                        "additionalProperties": False,
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "query_knowledge",
+                    "description": "Search the personal knowledge base for notes, projects, and writings beyond the LinkedIn profile. Use when the user asks about topics not covered in the linkedin profile or summary. The tool has multiple questions and answers a recruiter could ask.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "question": {
+                                "type": "string",
+                                "description": "The question to search the knowledge base for",
+                            }
                         },
                         "required": ["question"],
                         "additionalProperties": False,

@@ -8,6 +8,7 @@ from agentic.agents import TwinResponseReviewer, UserMessageValidator
 from tools import AiTools
 from notifications import NotificationClient
 from styles import CSS, JS, EXAMPLES
+from data.db import KnowledgeStore
 
 
 def chat(message, history):
@@ -38,7 +39,7 @@ def chat(message, history):
         # If a tool was not called, we validate the Twin response (It Could change if we add tools to retrieve information)
         if not tool_was_called:
             user_prompt = agents_context.get_validator_user_prompt(message)
-            needs_review = message_validator.validate_user_message(user_prompt, tools)
+            needs_review = message_validator.validate_user_message(user_prompt)
 
             if not needs_review.get("review_twin_response", False):
                 break
@@ -50,19 +51,17 @@ def chat(message, history):
                 assistant_response,
                 json.dumps(messages),
             )
-            review = response_reviewer.get_review(user_prompt, tools)
+            review = response_reviewer.get_review(user_prompt)
 
             if review.get("is_ok", False):
                 break
 
             messages.append(
-                [
-                    {
-                        "role": "user",
-                        "content": "The AI agent Response Reviewer suggest the following for your response: "
-                        + review.get("suggestions", "No suggestions provided"),
-                    }
-                ]
+                {
+                    "role": "user",
+                    "content": "The AI agent Response Reviewer suggest the following for your response: "
+                    + review.get("suggestions", "No suggestions provided"),
+                }
             )
         else:
             tool_was_called = False
@@ -72,8 +71,9 @@ def chat(message, history):
 
 provider = AiProvider()
 notification_client = NotificationClient()
+knowledge_store = KnowledgeStore()
 
-ai_tools = AiTools(notification_client)
+ai_tools = AiTools(notification_client, knowledge_store)
 ai_context = context.get_ai_context()
 
 # Digital Twin
@@ -93,7 +93,7 @@ message_validator = UserMessageValidator(
 gr.ChatInterface(
     chat,
     examples=EXAMPLES,
-    title="Digital Twin",
+    title="Abrahim Digital Twin",
     description="Talk to my AI twin about my career",
     chatbot=gr.Chatbot(show_label=False),
 ).launch(css=CSS, js=JS, theme=gr.themes.Base(), server_port=7860)

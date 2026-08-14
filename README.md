@@ -77,7 +77,7 @@ The twin is grounded by a system prompt built at startup from the PDF profile an
 | Profile input| PyPDF (reads `info/profile.pdf`)                       |
 | Notifications| Requests + Pushover API                                |
 | Config       | python-dotenv                                          |
-| Packaging    | `pyproject.toml` + `requirements.txt`                  |
+| Packaging    | `uv` (lockfile: `src/uv.lock`), `pyproject.toml` + `requirements.txt` (fallback) |
 | Container    | Docker (python:3.12-slim)                              |
 | CI/CD        | GitHub Actions -> GHCR -> Render deploy hook           |
 
@@ -135,12 +135,16 @@ twin_agent/
 
    Then edit `.env` with your provider keys and Pushover credentials.
 
-3. Install dependencies (from the `src/` directory):
+3. Install dependencies (from the `src/` directory). This is a **uv** project — `uv sync` is preferred and reads the locked dependencies from `uv.lock`; `pip` works as a fallback:
 
    ```bash
    cd src
+   uv sync            # preferred (uses uv.lock)
+   # — or —
    pip install -r requirements.txt
    ```
+
+   > **Dependency note:** `requirements.txt` and `pyproject.toml` declare `dotenv>=0.9.9`, but the code imports `from dotenv import load_dotenv`, which is the API of the **`python-dotenv`** package (a different distribution). `uv.lock` already resolves this correctly; if you re-pin deps by hand, use `python-dotenv`, not `dotenv`.
 
 ## Environment Variables
 
@@ -156,15 +160,20 @@ All variables are defined in `.env.example`:
 | `OPENROUTER_API_KEY`      | OpenRouter API key (optional alternative)         | Optional                |
 | `PUSHOVER_USER`           | Pushover user key                                 | Lead notifications      |
 | `PUSHOVER_TOKEN`          | Pushover app token                                | Lead notifications      |
+| `OPENCOODE_API_KEY`       | *(vestigial — present in `.env.example` but not referenced by any code; safe to leave blank)* | None |
 
 > The Pushover user key should start with `u` and the token with `a`; the app logs a validation hint on startup.
 
 ## Running Locally
 
+The app runs from the `src/` directory — its top-level imports (`import context`, `from digital_twin import DigitalTwin`, `from providers import AiProvider`) only resolve when `src/` is on `sys.path`.
+
 From the `src/` directory:
 
 ```bash
-python main.py
+uv run python main.py     # preferred (uses the project venv)
+# — or —
+python main.py            # inside an activated src/.venv
 ```
 
 The Gradio web UI launches at `http://localhost:7860` with the title **Digital Twin** and the description *"Talk to my AI twin about my career"*.
@@ -214,4 +223,4 @@ To change the visual identity, edit the palette constants (`GOLD`, `BLUE`, `PURP
 - [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
 - [Render deploy hooks](https://render.com/docs/deploy-hooks)
 
-*Last Updated: 12 Aug 2026*
+*Last Updated: 13 Aug 2026*

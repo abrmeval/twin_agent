@@ -11,7 +11,7 @@ class TwinResponseReviewer:
         self.client = OpenAI(base_url=endpoint, api_key=api_key)
         self.instructions = instructions
 
-    def get_review(self, message, tools):
+    def get_review(self, message):
         message_list = [self.instructions, message]
 
         response = self.client.chat.completions.create(
@@ -33,7 +33,7 @@ class UserMessageValidator:
         self.client = OpenAI(base_url=endpoint, api_key=api_key)
         self.instructions = instructions
 
-    def validate_user_message(self, message, tools):
+    def validate_user_message(self, message):
         message_list = [self.instructions, message]
 
         response = self.client.chat.completions.create(
