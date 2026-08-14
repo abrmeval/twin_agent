@@ -36,7 +36,7 @@ def chat(message, history):
 
         assistant_response = response.choices[0].message.content
 
-        # If a tool was not called, we validate the Twin response (It Could change if we add tools to retrieve information)
+        # If a tool was not called, we validate the Twin response (it could change if we add tools to retrieve information)
         if not tool_was_called:
             user_prompt = agents_context.get_validator_user_prompt(message)
             needs_review = message_validator.validate_user_message(user_prompt)
@@ -59,7 +59,7 @@ def chat(message, history):
             messages.append(
                 {
                     "role": "user",
-                    "content": "The AI agent Response Reviewer suggest the following for your response: "
+                    "content": "The AI agent Response Reviewer suggests the following for your response: "
                     + review.get("suggestions", "No suggestions provided"),
                 }
             )

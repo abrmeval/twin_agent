@@ -93,12 +93,11 @@ body, gradio-app {
   text-align: left !important;
   position: relative;
 
-  /* Solid fallback so the title is never invisible if background-clip:text
-     is unsupported. Overridden by -webkit-text-fill-color in WebKit/Blink. */
+  /* Blue -> red gradient text using the app's main accent colors.
+     background-image (not shorthand) prevents accidental reset of background-clip.
+     A solid fallback color is provided for browsers without background-clip:text. */
   color: var(--twin-blue) !important;
-
-  /* Blue -> red gradient text using the app's main accent colors. */
-  background: linear-gradient(
+  background-image: linear-gradient(
       90deg,
       var(--twin-blue) 0%,
       var(--twin-blue-dark) 28%,
@@ -106,9 +105,13 @@ body, gradio-app {
       var(--twin-red-dark) 76%,
       var(--twin-red) 100%
     ) !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
+  box-decoration-break: clone !important;
+  -webkit-box-decoration-break: clone !important;
 
   /* Match the text gradient on the left accent stripe. */
   border-left: 3px solid transparent;
